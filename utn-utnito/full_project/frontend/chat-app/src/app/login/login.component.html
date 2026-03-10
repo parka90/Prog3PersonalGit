@@ -1,0 +1,40 @@
+<main class="login-page">
+  <section class="login-card">
+    <div class="brand-block">
+      <img src="assets/utnito-logo.svg" alt="UTNito logo" class="brand-logo" />
+      <h1>{{ i18n.t('login.welcome', { agentName: agentName }) }}</h1>
+      <p class="subtitle">{{ i18n.t('login.signIn', { agentName: agentName }) }}</p>
+    </div>
+
+    <form class="login-form" [class.show-error]="!!errorMessage" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <label for="username">{{ i18n.t('login.username') }}</label>
+      <input
+        id="username"
+        formControlName="username"
+        type="text"
+        [placeholder]="i18n.t('login.usernamePlaceholder')"
+        autocomplete="username"
+      />
+
+      <label for="password">{{ i18n.t('login.password') }}</label>
+      <input
+        id="password"
+        formControlName="password"
+        type="password"
+        [placeholder]="i18n.t('login.passwordPlaceholder')"
+        autocomplete="current-password"
+      />
+
+      <p class="error-text">{{ errorMessage }}</p>
+
+      <button type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? i18n.t('login.loggingIn') : i18n.t('login.login') }}
+      </button>
+    </form>
+
+    <footer class="login-footer">
+      <p class="program-name">{{ i18n.t('login.programName') }}</p>
+      <p>{{ i18n.t('login.academicNote') }}</p>
+    </footer>
+  </section>
+</main>

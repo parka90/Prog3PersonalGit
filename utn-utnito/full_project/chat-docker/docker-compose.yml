@@ -1,0 +1,103 @@
+services:
+  chat-core-service:
+    build:
+      context: ../backend/chat-core-service
+      dockerfile: Dockerfile
+    container_name: ${COMPOSE_PROJECT_NAME:-utn-ai}-chat-core-service
+    ports:
+      - "${CORE_SERVICE_PORT:-4012}:3001"
+    environment:
+      APP_NAME: utn-ai-chat-core-service
+      APP_PORT: 3001
+    depends_on:
+      chat-postgres:
+        condition: service_healthy
+    networks:
+      - utn-ai-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/health >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  chat-postgres:
+    image: postgres:17-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-utn-ai}-chat-postgres
+    ports:
+      - "${POSTGRES_PORT:-5454}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-utn_ai_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-utn_ai_password}
+      POSTGRES_DB: ${POSTGRES_DB:-utn_ai_db}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - utn-ai-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-utn_ai_user} -d ${POSTGRES_DB:-utn_ai_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  chat-n8n:
+    image: n8nio/n8n:latest
+    container_name: ${COMPOSE_PROJECT_NAME:-utn-ai}-chat-n8n
+    ports:
+      - "${N8N_PORT:-5690}:5678"
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: chat-postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB:-utn_ai_db}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER:-utn_ai_user}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:-utn_ai_password}
+      N8N_BASIC_AUTH_ACTIVE: ${N8N_BASIC_AUTH_ACTIVE:-true}
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-utn_ai_admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-utn_ai_admin_password}
+      GENERIC_TIMEZONE: ${GENERIC_TIMEZONE:-America/Argentina/Buenos_Aires}
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      N8N_RUNNERS_ENABLED: "true"
+    depends_on:
+      chat-postgres:
+        condition: service_healthy
+      chat-core-service:
+        condition: service_healthy
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - utn-ai-network
+    restart: unless-stopped
+
+  chat-frontend:
+    build:
+      context: ../frontend/chat-app
+      dockerfile: Dockerfile
+    container_name: ${COMPOSE_PROJECT_NAME:-utn-ai}-chat-frontend
+    ports:
+      - "${FRONTEND_PORT:-4300}:80"
+    depends_on:
+      chat-core-service:
+        condition: service_healthy
+    networks:
+      - utn-ai-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80 >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  postgres-data:
+    name: ${COMPOSE_PROJECT_NAME:-utn-ai}-postgres-data
+  n8n-data:
+    name: ${COMPOSE_PROJECT_NAME:-utn-ai}-n8n-data
+
+networks:
+  utn-ai-network:
+    name: ${COMPOSE_PROJECT_NAME:-utn-ai}-network

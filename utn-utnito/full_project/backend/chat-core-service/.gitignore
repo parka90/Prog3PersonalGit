@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+*.log
+
+# Local sqlite files (generated at runtime)
+database/*.db
+database/*.db-*

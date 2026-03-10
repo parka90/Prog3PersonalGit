@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+DOCKER_DIR="${PROJECT_DIR}/chat-docker"
+COMPOSE_FILE="${DOCKER_DIR}/docker-compose.yml"
+ENV_FILE="${DOCKER_DIR}/.env"
+ENV_EXAMPLE_FILE="${DOCKER_DIR}/.env.example"
+
+log_info() {
+  printf '[INFO] %s\n' "$1"
+}
+
+log_warn() {
+  printf '[WARN] %s\n' "$1"
+}
+
+log_error() {
+  printf '[ERROR] %s\n' "$1" >&2
+}
+
+check_command() {
+  local command_name="$1"
+  if command -v "${command_name}" >/dev/null 2>&1; then
+    log_info "Found ${command_name}: $(command -v "${command_name}")"
+    return 0
+  fi
+
+  log_error "Missing required command: ${command_name}"
+  return 1
+}
+
+check_docker_compose() {
+  if docker compose version >/dev/null 2>&1; then
+    log_info "Docker Compose v2 is available."
+    return 0
+  fi
+
+  log_error "Docker Compose v2 is not available (docker compose)."
+  return 1
+}
+
+load_env_file() {
+  local source_file="$1"
+  if [[ -f "${source_file}" ]]; then
+    # shellcheck disable=SC1090
+    set -a && source "${source_file}" && set +a
+    log_info "Loaded environment values from ${source_file}."
+    return
+  fi
+
+  log_warn "Environment file not found: ${source_file}"
+}
+
+port_in_use() {
+  local port="$1"
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -iTCP:"${port}" -sTCP:LISTEN -n -P >/dev/null 2>&1
+    return $?
+  fi
+
+  log_warn "lsof command not available; skipping port check for ${port}."
+  return 1
+}
+
+diagnose_ports() {
+  local collisions=0
+  local frontend_port="${FRONTEND_PORT:-4300}"
+  local core_service_port="${CORE_SERVICE_PORT:-4012}"
+  local postgres_port="${POSTGRES_PORT:-5454}"
+  local n8n_port="${N8N_PORT:-5690}"
+  local ports=("${frontend_port}" "${core_service_port}" "${postgres_port}" "${n8n_port}")
+
+  for port in "${ports[@]}"; do
+    if port_in_use "${port}"; then
+      log_error "Port ${port} is already in use."
+      collisions=$((collisions + 1))
+    else
+      log_info "Port ${port} is available."
+    fi
+  done
+
+  if ((collisions > 0)); then
+    log_error "Detected ${collisions} port collision(s). Update chat-docker/.env before starting services."
+    return 1
+  fi
+
+  return 0
+}
+
+validate_compose() {
+  local compose_env_file="${ENV_FILE}"
+  if [[ ! -f "${compose_env_file}" ]]; then
+    compose_env_file="${ENV_EXAMPLE_FILE}"
+  fi
+
+  if docker compose --env-file "${compose_env_file}" -f "${COMPOSE_FILE}" config -q; then
+    log_info "docker-compose.yml is valid."
+    return 0
+  fi
+
+  log_error "docker-compose.yml validation failed."
+  return 1
+}
+
+print_versions() {
+  log_info "node version: $(node -v 2>/dev/null || echo 'not available')"
+  log_info "npm version: $(npm -v 2>/dev/null || echo 'not available')"
+  log_info "docker version: $(docker --version 2>/dev/null || echo 'not available')"
+  log_info "docker compose version: $(docker compose version 2>/dev/null || echo 'not available')"
+  log_info "git version: $(git --version 2>/dev/null || echo 'not available')"
+}
+
+log_info "Running utn-ai doctor."
+
+status=0
+check_command git || status=1
+check_command node || status=1
+check_command npm || status=1
+check_command docker || status=1
+check_docker_compose || status=1
+
+if ((status != 0)); then
+  exit "${status}"
+fi
+
+if [[ -f "${ENV_FILE}" ]]; then
+  load_env_file "${ENV_FILE}"
+else
+  load_env_file "${ENV_EXAMPLE_FILE}"
+fi
+
+print_versions
+validate_compose
+diagnose_ports
+
+log_info "Doctor finished successfully."
