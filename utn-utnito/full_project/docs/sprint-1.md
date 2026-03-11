@@ -1,11 +1,11 @@
 # Sprint 1 Scope
 
-Sprint 1 goal: deliver a runnable frontend chat base and backend health support using the same stack/style direction as Janne.
+Sprint 1 goal: deliver a runnable frontend chat base and backend health support using a consistent UTNito stack and style.
 
 ## Included
 
 - NestJS + TypeScript backend in `backend/chat-core-service`
-  - Janne-style structure
+  - Modular structure
   - Basic reusable layer under `src/basic`
   - Health module (`module/controller/service`)
   - `GET /health`

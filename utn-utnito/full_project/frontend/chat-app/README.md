@@ -4,7 +4,7 @@ Angular frontend for `utn-ai`.
 
 ## Current Scope (Sprint 1.2)
 
-- Angular application scaffold (module-based, Janne style)
+- Angular application scaffold (module-based architecture)
 - Chat base component with local mock behavior
 - Routing base for chat screen
 - Dockerized production build served by Nginx

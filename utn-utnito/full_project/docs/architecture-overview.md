@@ -14,7 +14,7 @@ Browser
 ## Sprint 1.2 State
 
 - `chat-core-service` is implemented with NestJS + TypeScript.
-- Backend includes a Janne-style basic reusable layer in `src/basic`.
+- Backend includes a reusable basic layer in `src/basic`.
 - `health` is implemented as service/controller/module.
 - `chat-app` is implemented as an Angular application base.
 - Dockerized local stack includes frontend, backend, PostgreSQL, and n8n.

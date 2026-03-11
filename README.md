@@ -28,6 +28,12 @@ The course uses an incremental project-based approach:
 
 Students learn each concept by applying it immediately in code, class after class, until they complete a production-style system.
 
+### Educational Use
+This repository is intended for educational purposes. Students may use, modify, and adapt the code for learning and portfolio projects.
+
+### License
+This project is licensed under the MIT License. See `LICENSE`.
+
 ## Español
 
 ### Descripción del proyecto
@@ -55,3 +61,9 @@ La materia usa un enfoque incremental orientado a proyecto:
 - `utn-utnito/course`: checkpoints por clase
 
 Los estudiantes aprenden cada concepto aplicándolo inmediatamente en código, clase a clase, hasta completar un sistema con estilo de producción.
+
+### Uso Educativo
+Este repositorio está orientado a fines educativos. Los estudiantes pueden usar, modificar y adaptar el código para aprendizaje y proyectos de portafolio.
+
+### Licencia
+Este proyecto está licenciado bajo MIT. Ver `LICENSE`.

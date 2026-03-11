@@ -4,7 +4,7 @@ Sprint 0 goal: establish a stable and repeatable local development foundation.
 
 ## Included
 
-- Monorepo skeleton aligned with `janne` style
+- Monorepo skeleton aligned with the UTNito architecture style
 - Naming conventions finalized (`utn-ai`, `chat-docker`, `chat-core-service`)
 - Local Docker stack for foundational services:
   - PostgreSQL

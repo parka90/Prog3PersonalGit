@@ -4,7 +4,7 @@ NestJS + TypeScript backend service for the UTNito course project.
 
 ## Scope (Sprint 2)
 
-- Janne-style modular architecture
+- Modular architecture with reusable base components
 - `chat-app` BFF controller for frontend-driven use cases
 - JWT authentication with users configured from environment variables
 - SQLite persistence with TypeORM (`synchronize=true`)
