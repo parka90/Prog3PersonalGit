@@ -1,6 +1,6 @@
 # chat-app
 
-Angular frontend for `utn-ai`.
+Angular frontend for `utn-utnito`.
 
 ## Current Scope (Sprint 1.2)
 

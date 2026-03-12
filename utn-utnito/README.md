@@ -1,11 +1,31 @@
 # utn-utnito
 
-Main workspace for the UTN AI course project.
+## Español
 
-## Structure
+Espacio principal de trabajo del proyecto de cursada UTNito para Programación III.
+
+### Estructura
+
+```txt
+utn-utnito/
+  full_project/   # Implementación completa del producto
+  course/         # Material de aprendizaje clase por clase
+```
+
+- [`full_project`](./full_project/README.md)
+- [`course`](./course/README.md)
+
+## English
+
+Main workspace for the UTNito course project for Programming III.
+
+### Structure
 
 ```txt
 utn-utnito/
   full_project/   # Complete product implementation
   course/         # Class-by-class learning material
 ```
+
+- [`full_project`](./full_project/README.md)
+- [`course`](./course/README.md)

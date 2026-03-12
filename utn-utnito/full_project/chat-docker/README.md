@@ -1,6 +1,6 @@
 # chat-docker
 
-Local infrastructure and runtime stack for `utn-ai`.
+Local infrastructure and runtime stack for `utn-utnito`.
 
 ## Included Services (Sprint 1.2)
 
