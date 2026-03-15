@@ -5,290 +5,274 @@
 
 ## English
 
-### Prerequisites
+### Project Overview
 
-Install these dependencies in your machine:
+This repository contains the practical course implementation for **Programacion III (Tecnicatura Universitaria en Programacion - UTN BA)**.
 
-- Node.js LTS (includes `npm`)
-- Docker Desktop (Docker Engine + Docker Compose)
-- Git
+`utn-utnito` is a full-stack educational project where students build a real chat platform step by step, from UI to backend, persistence, authentication, and AI integration.
 
-### Recommended Tools
+### Technologies
 
-- Visual Studio Code
-- Docker Desktop
-- DBeaver
+- Frontend: Angular + TypeScript
+- Backend: NestJS + TypeScript + TypeORM
+- Database: SQLite (chat-core-service)
+- AI orchestration: n8n
+- AI provider: OpenAI (through n8n workflow)
+- Infra: Docker + Docker Compose
 
-### Project Introduction
+### Navigation
 
-`utn-utnito` is a course project that teaches students how to build a real chat-based system incrementally.  
-The monorepo contains both the complete reference implementation (`full_project`) and class-by-class educational checkpoints (`course`).
+- [Architecture](#architecture-en)
+- [Frontend](#frontend-en)
+- [Backend](#backend-en)
+- [Docker](#docker-en)
+- [Arquitectura](#architecture-es)
+- [Frontend (ES)](#frontend-es)
+- [Backend (ES)](#backend-es)
+- [Docker (ES)](#docker-es)
 
-### Monorepo Layout
+<a id="architecture-en"></a>
 
-```txt
-full_project/
-  backend/
-    chat-core-service/   # NestJS + TypeScript
-    n8n/
-      workflows/
-  frontend/
-    chat-app/            # Angular
-    chat-html/           # Static UI prototypes
-  chat-docker/
-    docker-compose.yml
-    .env.example
-  scripts/
-    setup.sh
-    setup.ps1
-    doctor.sh
-    doctor.ps1
-    start.sh
-    start.ps1
-  docs/
-```
+### Architecture
 
-### Frontend Architecture
+#### High-level flow
 
-- Technology: Angular + TypeScript.
-- App: `frontend/chat-app`.
-- Main responsibilities:
-  - Login screen and chat shell UI.
-  - Conversation list, message stream, message composer.
-  - Route protection with auth guard.
-  - JWT propagation via HTTP interceptor.
-  - Locale-based UI strings (Spanish/English).
-- API integration:
-  - Uses `coreServiceUrl` from environment.
-  - Consumes backend BFF endpoints under `/chat-app/*`.
+User -> Angular app -> NestJS chat-core-service -> SQLite
 
-### Backend Architecture
+For AI responses:
 
-- Technology: NestJS + TypeScript + TypeORM.
-- Service: `backend/chat-core-service`.
-- Main modules:
-  - `health` for service status.
-  - `auth` for login/refresh/me with JWT.
-  - `chat-app` as BFF aligned to frontend use cases.
-  - `conversation` for conversation lifecycle.
-  - `message` for message persistence and response orchestration.
-  - `ai` for provider abstraction (`mock` currently active).
-  - `database` for SQLite configuration in current sprint.
-- AI integration strategy:
-  - Current sprint: backend `ai` module uses local `mock` provider.
-  - Target flow: backend calls n8n workflow, n8n orchestrates external AI providers (OpenAI, Ollama, etc.), then returns response to backend.
-- Persistence model:
-  - `conversations` table with `ACTIVE | INACTIVE | ARCHIVED`.
-  - `messages` table with `USER | ASSISTANT`.
-  - `n8n` uses PostgreSQL only for its own internal runtime data (not for chat business data).
+NestJS chat-core-service -> n8n webhook workflow -> OpenAI API -> n8n -> NestJS -> Angular
 
-### Architecture Diagrams
+#### Main components
 
-#### 1) Container View
+- `frontend/chat-app`: login + chat UI, conversations, messages, auth-aware client
+- `backend/chat-core-service`: auth, chat-app BFF, conversations, messages, AI provider strategy
+- `chat-docker`: compose stack to run n8n-only or full stack
+- `backend/n8n/workflows`: n8n workflows used by the backend AI provider
 
-```mermaid
-flowchart LR
-  U[User Browser] --> FE[Angular Frontend<br/>chat-app]
-  FE --> BE[NestJS Backend<br/>chat-core-service]
-  BE --> DB[(Chat SQLite DB)]
-  BE --> A[AI Adapter<br/>mock now]
-  BE -. future .-> N8N[n8n Service]
-  N8N --> LLM[AI Providers<br/>OpenAI / Ollama / others]
-  N8N --> N8NDB[(n8n PostgreSQL DB<br/>internal metadata)]
-```
+#### Ports and URLs
 
-#### 2) Backend Module View
+Local development:
 
-```mermaid
-flowchart TB
-  C[chat-app controller BFF] --> S[chat-app service]
-  S --> Conv[conversation module]
-  S --> Msg[message module]
-  Msg --> Ai[ai module]
-  C --> Auth[auth module]
-  C --> Health[health module]
-  Conv --> Db[(database module)]
-  Msg --> Db
-```
+- Frontend: `http://localhost:5300`
+- Backend: `http://localhost:5001`
+- Swagger: `http://localhost:5001/utn-chat-back/api`
 
-#### 3) Message Flow (Current Sprint)
-
-```mermaid
-sequenceDiagram
-  participant UI as Angular chat-app
-  participant API as NestJS chat-core-service
-  participant SQLITE as SQLite
-  participant AIP as Mock AI Provider
-
-  UI->>API: POST /chat-app/conversations/{id}/messages
-  API->>SQLITE: Save USER message
-  API->>AIP: generateReply(content, conversationTitle)
-  AIP-->>API: assistant text
-  API->>SQLITE: Save ASSISTANT message
-  API-->>UI: { userMessage, assistantMessage }
-```
-
-#### 4) Message Flow (Target with n8n)
-
-```mermaid
-sequenceDiagram
-  participant UI as Angular chat-app
-  participant API as NestJS chat-core-service
-  participant SQLITE as Chat SQLite
-  participant N8N as n8n workflow
-  participant LLM as AI Provider (GPT/Ollama)
-  participant N8NDB as n8n PostgreSQL (internal)
-
-  UI->>API: POST /chat-app/conversations/{id}/messages
-  API->>SQLITE: Save USER message
-  API->>N8N: Send prompt/context payload
-  N8N->>LLM: Invoke provider API
-  LLM-->>N8N: Model response
-  N8N->>N8NDB: Store workflow execution metadata
-  N8N-->>API: assistant text
-  API->>SQLITE: Save ASSISTANT message
-  API-->>UI: { userMessage, assistantMessage }
-```
-
-### Quick Start
-
-1. Create local environment file:
-
-```bash
-cp chat-docker/.env.example chat-docker/.env
-```
-
-2. Run setup:
-
-```bash
-./scripts/setup.sh
-```
-
-3. Start local stack:
-
-```bash
-./scripts/start.sh
-```
-
-For Windows PowerShell, use `.ps1` variants.
-
-### Default URLs
+Docker stack:
 
 - Frontend: `http://localhost:4300`
-- Core service health: `http://localhost:4012/health`
-- Core service Swagger: `http://localhost:4012/api`
+- Backend: `http://localhost:4012`
+- Swagger: `http://localhost:4012/utn-chat-back/api`
 - n8n: `http://localhost:5690`
+
+<a id="frontend-en"></a>
+
+### Frontend
+
+Run the Angular app locally:
+
+```bash
+cd utn-utnito/full_project/frontend/chat-app
+npm install
+npm run start
+```
+
+Default local URL: `http://localhost:5300`
+
+<a id="backend-en"></a>
+
+### Backend
+
+Run chat-core-service locally:
+
+```bash
+cd utn-utnito/full_project/backend/chat-core-service
+cp .env.example .env
+npm install
+npm run start:dev
+```
+
+Backend URL: `http://localhost:5001`
+
+Swagger UI:
+
+- `http://localhost:5001/utn-chat-back/api`
+
+Important note about `.env`:
+
+- `.env` is local and not committed.
+- Use `.env.example` as the template.
+- By default, the backend runs in `mock` AI mode (`AI_PROVIDER=mock`).
+- To use ChatGPT through n8n, follow the Docker section.
+
+<a id="docker-en"></a>
+
+### Docker
+
+Docker is used to run infrastructure and integration scenarios, especially **n8n** for AI orchestration.
+
+#### 1) Start only n8n (recommended first step)
+
+```bash
+cd utn-utnito/full_project/chat-docker
+cp .env.example .env
+docker compose up -d chat-n8n
+```
+
+n8n URL: `http://localhost:5690`
+
+#### 2) Start full stack (frontend + backend + n8n)
+
+```bash
+cd utn-utnito/full_project/chat-docker
+docker compose --profile full up -d
+```
+
+#### 3) Configure ChatGPT integration (n8n + OpenAI)
+
+1. Open n8n (`http://localhost:5690`).
+2. Import workflow:
+   - `backend/n8n/workflows/utnito/utnito_chatgpt_message_response.json`
+3. Configure OpenAI credentials in n8n.
+4. In backend `.env`, set:
+   - `AI_PROVIDER=chatgpt`
+   - `AI_N8N_WEBHOOK_URL=http://localhost:5690/webhook/utnito-prompt-processing`
+5. Restart backend service.
+
+If n8n/OpenAI fails, backend fallback behavior is controlled by `AI_ON_ERROR_FALLBACK`.
 
 ---
 
 ## Español
 
-### Prerrequisitos
+### Descripción del Proyecto
 
-Instalar estas dependencias en la máquina:
+Este repositorio contiene el material práctico de implementación de **Programación III (Tecnicatura Universitaria en Programación - UTN BA)**.
 
-- Node.js LTS (incluye `npm`)
-- Docker Desktop (Docker Engine + Docker Compose)
-- Git
+`utn-utnito` es un proyecto full-stack educativo donde los estudiantes construyen una plataforma de chat real paso a paso: interfaz, backend, persistencia, autenticación e integración con IA.
 
-### Herramientas Recomendadas
+### Tecnologías
 
-- Visual Studio Code
-- Docker Desktop
-- DBeaver
+- Frontend: Angular + TypeScript
+- Backend: NestJS + TypeScript + TypeORM
+- Base de datos: SQLite (chat-core-service)
+- Orquestación IA: n8n
+- Proveedor IA: OpenAI (mediante workflow de n8n)
+- Infraestructura: Docker + Docker Compose
 
-### Introducción del Proyecto
+### Navegación
 
-`utn-utnito` es un proyecto de cursada para enseñar cómo construir un sistema real de chat de forma incremental.  
-El monorepo incluye tanto la implementación de referencia completa (`full_project`) como los checkpoints por clase (`course`).
+- [Arquitectura](#architecture-es)
+- [Frontend](#frontend-es)
+- [Backend](#backend-es)
+- [Docker](#docker-es)
 
-### Estructura del Monorepo
+<a id="architecture-es"></a>
 
-```txt
-full_project/
-  backend/
-    chat-core-service/   # NestJS + TypeScript
-    n8n/
-      workflows/
-  frontend/
-    chat-app/            # Angular
-    chat-html/           # Prototipos estáticos de UI
-  chat-docker/
-    docker-compose.yml
-    .env.example
-  scripts/
-    setup.sh
-    setup.ps1
-    doctor.sh
-    doctor.ps1
-    start.sh
-    start.ps1
-  docs/
-```
+### Arquitectura
 
-### Arquitectura Frontend
+#### Flujo general
 
-- Tecnología: Angular + TypeScript.
-- Aplicación: `frontend/chat-app`.
-- Responsabilidades principales:
-  - Pantalla de login y shell de chat.
-  - Lista de conversaciones, stream de mensajes y composer.
-  - Protección de rutas con auth guard.
-  - Propagación de JWT con interceptor HTTP.
-  - Textos de UI por locale (español/inglés).
-- Integración API:
-  - Usa `coreServiceUrl` desde environment.
-  - Consume endpoints BFF del backend bajo `/chat-app/*`.
+Usuario -> Angular -> NestJS chat-core-service -> SQLite
 
-### Arquitectura Backend
+Para respuestas de IA:
 
-- Tecnología: NestJS + TypeScript + TypeORM.
-- Servicio: `backend/chat-core-service`.
-- Módulos principales:
-  - `health` para estado del servicio.
-  - `auth` para login/refresh/me con JWT.
-  - `chat-app` como BFF alineado a casos de uso del frontend.
-  - `conversation` para ciclo de vida de conversaciones.
-  - `message` para persistencia de mensajes y orquestación de respuesta.
-  - `ai` para abstracción de proveedor (`mock` activo actualmente).
-  - `database` para configuración SQLite en este sprint.
-- Estrategia de integración con IA:
-  - Sprint actual: el módulo `ai` del backend usa proveedor `mock` local.
-  - Flujo objetivo: el backend invoca un workflow de n8n, n8n orquesta proveedores externos de IA (OpenAI, Ollama, etc.) y devuelve la respuesta al backend.
-- Modelo de persistencia:
-  - Tabla `conversations` con `ACTIVE | INACTIVE | ARCHIVED`.
-  - Tabla `messages` con `USER | ASSISTANT`.
-  - `n8n` usa PostgreSQL únicamente para sus datos internos de ejecución (no para los datos de negocio del chat).
+NestJS chat-core-service -> webhook de n8n -> API de OpenAI -> n8n -> NestJS -> Angular
 
-### Diagramas de Arquitectura
+#### Componentes principales
 
-Los diagramas de contenedores, módulos y flujo de mensajes son los mismos definidos en la sección en inglés de este documento.
+- `frontend/chat-app`: login + UI de chat, conversaciones, mensajes, cliente con autenticación
+- `backend/chat-core-service`: auth, BFF de chat-app, conversaciones, mensajes, estrategia de proveedores IA
+- `chat-docker`: stack de compose para levantar solo n8n o el stack completo
+- `backend/n8n/workflows`: workflows de n8n utilizados por el backend
 
-### Inicio Rápido
+#### Puertos y URLs
 
-1. Crear archivo de entorno local:
+Desarrollo local:
 
-```bash
-cp chat-docker/.env.example chat-docker/.env
-```
+- Frontend: `http://localhost:5300`
+- Backend: `http://localhost:5001`
+- Swagger: `http://localhost:5001/utn-chat-back/api`
 
-2. Ejecutar setup:
-
-```bash
-./scripts/setup.sh
-```
-
-3. Levantar stack local:
-
-```bash
-./scripts/start.sh
-```
-
-En Windows PowerShell, usar variantes `.ps1`.
-
-### URLs por Defecto
+Stack con Docker:
 
 - Frontend: `http://localhost:4300`
-- Health del core service: `http://localhost:4012/health`
-- Swagger del core service: `http://localhost:4012/api`
+- Backend: `http://localhost:4012`
+- Swagger: `http://localhost:4012/utn-chat-back/api`
 - n8n: `http://localhost:5690`
+
+<a id="frontend-es"></a>
+
+### Frontend
+
+Para levantar Angular localmente:
+
+```bash
+cd utn-utnito/full_project/frontend/chat-app
+npm install
+npm run start
+```
+
+URL local por defecto: `http://localhost:5300`
+
+<a id="backend-es"></a>
+
+### Backend
+
+Para levantar chat-core-service localmente:
+
+```bash
+cd utn-utnito/full_project/backend/chat-core-service
+cp .env.example .env
+npm install
+npm run start:dev
+```
+
+URL backend: `http://localhost:5001`
+
+Swagger:
+
+- `http://localhost:5001/utn-chat-back/api`
+
+Importante sobre `.env`:
+
+- `.env` es local y no se comitea.
+- `.env.example` se usa como plantilla.
+- Por defecto, el backend corre en modo IA mock (`AI_PROVIDER=mock`).
+- Si querés usar ChatGPT mediante n8n, seguí la sección Docker.
+
+<a id="docker-es"></a>
+
+### Docker
+
+Docker se usa para levantar infraestructura e integración, especialmente **n8n** como orquestador de IA.
+
+#### 1) Levantar solo n8n (primer paso recomendado)
+
+```bash
+cd utn-utnito/full_project/chat-docker
+cp .env.example .env
+docker compose up -d chat-n8n
+```
+
+URL de n8n: `http://localhost:5690`
+
+#### 2) Levantar stack completo (frontend + backend + n8n)
+
+```bash
+cd utn-utnito/full_project/chat-docker
+docker compose --profile full up -d
+```
+
+#### 3) Configurar integración con ChatGPT (n8n + OpenAI)
+
+1. Abrir n8n (`http://localhost:5690`).
+2. Importar el workflow:
+   - `backend/n8n/workflows/utnito/utnito_chatgpt_message_response.json`
+3. Configurar credenciales de OpenAI dentro de n8n.
+4. En el `.env` del backend, definir:
+   - `AI_PROVIDER=chatgpt`
+   - `AI_N8N_WEBHOOK_URL=http://localhost:5690/webhook/utnito-prompt-processing`
+5. Reiniciar el backend.
+
+Si falla n8n/OpenAI, el fallback del backend se controla con `AI_ON_ERROR_FALLBACK`.

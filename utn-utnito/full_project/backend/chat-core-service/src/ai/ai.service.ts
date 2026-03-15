@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AiProvider } from './ai-provider.interface';
+import { AiProvider, GenerateReplyRequest } from './ai-provider.interface';
 import { MockAiProvider } from './mock-ai.provider';
+import { ChatGptAiProvider } from './chatgpt-ai.provider';
+import { AiProviderType } from './model/ai-provider-type.enum';
 
 @Injectable()
 export class AiService {
@@ -10,23 +12,61 @@ export class AiService {
   constructor(
     private readonly configService: ConfigService,
     private readonly mockAiProvider: MockAiProvider,
+    private readonly chatGptAiProvider: ChatGptAiProvider,
   ) {}
 
-  async generateReply(userMessage: string, conversationTitle: string): Promise<string> {
-    const provider = this.configService.get<string>('AI_PROVIDER', 'mock').toLowerCase();
+  async generateReply(request: GenerateReplyRequest): Promise<string> {
+    const provider = this.resolveProvider(
+      this.configService.get<string>('AI_PROVIDER', AiProviderType.MOCK),
+    );
+    const fallbackMode = this.resolveProvider(
+      this.configService.get<string>('AI_ON_ERROR_FALLBACK', AiProviderType.MOCK),
+    );
 
-    if (provider !== 'mock') {
-      this.logger.warn(`Unsupported AI_PROVIDER "${provider}". Falling back to mock provider.`);
+    const selectedProvider = this.getProvider(provider);
+
+    if (provider === AiProviderType.MOCK) {
+      const rawProvider = this.configService
+        .get<string>('AI_PROVIDER', AiProviderType.MOCK)
+        .toLowerCase();
+      if (rawProvider !== AiProviderType.MOCK) {
+        this.logger.warn(`Unsupported AI_PROVIDER "${rawProvider}". Falling back to mock provider.`);
+      }
     }
 
-    return this.getProvider(provider).generateReply(userMessage, conversationTitle);
+    try {
+      return await selectedProvider.generateReply(request);
+    } catch (error) {
+      if (provider === AiProviderType.CHATGPT && fallbackMode === AiProviderType.MOCK) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.logger.warn(
+          `${AiProviderType.CHATGPT} provider failed ("${errorMessage}"). Falling back to ${AiProviderType.MOCK} provider.`,
+        );
+        return this.mockAiProvider.generateReply(request);
+      }
+
+      throw error;
+    }
   }
 
-  private getProvider(provider: string): AiProvider {
+  private getProvider(provider: AiProviderType): AiProvider {
     switch (provider) {
-      case 'mock':
+      case AiProviderType.CHATGPT:
+        return this.chatGptAiProvider;
+      case AiProviderType.MOCK:
       default:
         return this.mockAiProvider;
+    }
+  }
+
+  private resolveProvider(provider: string): AiProviderType {
+    const normalizedProvider = provider.toLowerCase();
+    switch (normalizedProvider) {
+      case AiProviderType.CHATGPT:
+        return AiProviderType.CHATGPT;
+      case AiProviderType.MOCK:
+      default:
+        return AiProviderType.MOCK;
     }
   }
 }

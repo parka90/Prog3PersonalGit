@@ -1,3 +1,17 @@
+export interface AiContextMessage {
+  role: string;
+  content: string;
+  creationDate?: Date;
+}
+
+export interface GenerateReplyRequest {
+  userId: string;
+  conversationId: string;
+  conversationTitle: string;
+  latestUserMessage: string;
+  recentMessages: AiContextMessage[];
+}
+
 export interface AiProvider {
-  generateReply(userMessage: string, conversationTitle: string): Promise<string>;
+  generateReply(request: GenerateReplyRequest): Promise<string>;
 }

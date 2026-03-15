@@ -67,7 +67,7 @@ install_node_dependencies() {
   log_info "No package.json found in ${app_name}. Skipping dependency install."
 }
 
-log_info "Starting Sprint 0 setup for utn-ai."
+log_info "Starting setup for utn-utnito."
 
 require_command git
 require_command node
@@ -83,6 +83,6 @@ install_node_dependencies "${PROJECT_DIR}/backend/chat-core-service" "chat-core-
 install_node_dependencies "${PROJECT_DIR}/frontend/chat-app" "chat-app"
 
 log_info "Running environment diagnostics."
-"${SCRIPT_DIR}/doctor.sh"
+"${SCRIPT_DIR}/doctor.sh" n8n
 
 log_info "Setup completed."

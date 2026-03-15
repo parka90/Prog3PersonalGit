@@ -2,18 +2,16 @@
 
 Angular frontend for `utn-utnito`.
 
-## Current Scope (Sprint 1.2)
-
-- Angular application scaffold (module-based architecture)
-- Chat base component with local mock behavior
-- Routing base for chat screen
-- Dockerized production build served by Nginx
-
-## Local Run
+## Quick Start
 
 ```bash
+cd utn-utnito/full_project/frontend/chat-app
 npm install
 npm run start
 ```
 
-Default local dev port: `5300`
+Default local URL: `http://localhost:5300`
+
+For architecture, backend, Docker, and AI integration details, see the central project documentation:
+
+- [full_project/README.md](../../README.md)

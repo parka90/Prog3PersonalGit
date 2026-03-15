@@ -1,5 +1,10 @@
 $ErrorActionPreference = "Stop"
 
+param(
+  [ValidateSet("n8n", "full")]
+  [string]$Mode = "n8n"
+)
+
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectDir = Resolve-Path (Join-Path $ScriptDir "..")
 $DockerDir = Join-Path $ProjectDir "chat-docker"
@@ -83,7 +88,7 @@ function Validate-Compose($ComposeEnvFile) {
   }
 }
 
-Write-Info "Running utn-ai doctor."
+Write-Info "Running utn-utnito doctor (mode: $Mode)."
 
 $statusOk = $true
 $statusOk = (Check-Command git) -and $statusOk
@@ -116,10 +121,13 @@ if (-not (Validate-Compose $ComposeEnvFile)) {
 
 $frontendPort = if ($env:FRONTEND_PORT) { [int]$env:FRONTEND_PORT } else { 4300 }
 $coreServicePort = if ($env:CORE_SERVICE_PORT) { [int]$env:CORE_SERVICE_PORT } else { 4012 }
-$postgresPort = if ($env:POSTGRES_PORT) { [int]$env:POSTGRES_PORT } else { 5454 }
 $n8nPort = if ($env:N8N_PORT) { [int]$env:N8N_PORT } else { 5690 }
 
-$ports = @($frontendPort, $coreServicePort, $postgresPort, $n8nPort)
+if ($Mode -eq "full") {
+  $ports = @($frontendPort, $coreServicePort, $n8nPort)
+} else {
+  $ports = @($n8nPort)
+}
 $collisions = 0
 
 foreach ($port in $ports) {

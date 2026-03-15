@@ -65,7 +65,7 @@ function Install-NodeDependencies($AppDir, $AppName) {
   Write-Info "No package.json found in $AppName. Skipping dependency install."
 }
 
-Write-Info "Starting Sprint 0 setup for utn-ai."
+Write-Info "Starting setup for utn-utnito."
 
 Require-Command git
 Require-Command node
@@ -81,6 +81,6 @@ Install-NodeDependencies (Join-Path $ProjectDir "backend/chat-core-service") "ch
 Install-NodeDependencies (Join-Path $ProjectDir "frontend/chat-app") "chat-app"
 
 Write-Info "Running environment diagnostics."
-& (Join-Path $ScriptDir "doctor.ps1")
+& (Join-Path $ScriptDir "doctor.ps1") -Mode n8n
 
 Write-Info "Setup completed."

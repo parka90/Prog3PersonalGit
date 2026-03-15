@@ -1,8 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { AiService } from 'src/ai/ai.service';
+import { AiContextMessage } from 'src/ai/ai-provider.interface';
 import { ConversationService } from 'src/conversation/conversation.service';
 import { ConversationStatus } from 'src/conversation/model/conversation-status.enum';
 import { Pagination } from 'src/shared/pagination.model';
@@ -20,6 +22,7 @@ export class MessageService {
     private readonly messageRepository: Repository<MessageEntity>,
     private readonly conversationService: ConversationService,
     private readonly aiService: AiService,
+    private readonly configService: ConfigService,
   ) {}
 
   async listMessages(
@@ -68,7 +71,20 @@ export class MessageService {
 
     const savedUserMessage = await this.messageRepository.save(userMessageEntity);
 
-    const assistantContent = await this.aiService.generateReply(request.content.trim(), conversation.title);
+    const maxContextPairs = Number(this.configService.get<string>('AI_CONTEXT_MAX_PAIRS', '5'));
+    const recentMessages = await this.getRecentMessagesForContext(
+      userId,
+      conversationId,
+      maxContextPairs,
+    );
+
+    const assistantContent = await this.aiService.generateReply({
+      userId,
+      conversationId,
+      conversationTitle: conversation.title,
+      latestUserMessage: request.content.trim(),
+      recentMessages,
+    });
 
     const assistantMessageEntity = this.messageRepository.create({
       messageId: `msg_${uuidv4()}`,
@@ -87,5 +103,28 @@ export class MessageService {
       userMessage: Message.fromEntityToModel(savedUserMessage),
       assistantMessage: Message.fromEntityToModel(savedAssistantMessage),
     };
+  }
+
+  private async getRecentMessagesForContext(
+    userId: string,
+    conversationId: string,
+    maxPairs: number,
+  ): Promise<AiContextMessage[]> {
+    const numericPairs = Number(maxPairs);
+    const safePairs =
+      Number.isFinite(numericPairs) && numericPairs > 0 ? Math.floor(numericPairs) : 5;
+    const maxMessages = safePairs * 2;
+
+    const messages = await this.messageRepository.find({
+      where: { userId, conversationId },
+      order: { creationDate: 'DESC' },
+      take: maxMessages,
+    });
+
+    return messages.reverse().map((messageEntity) => ({
+      role: messageEntity.role,
+      content: messageEntity.content,
+      creationDate: messageEntity.creationDate,
+    }));
   }
 }

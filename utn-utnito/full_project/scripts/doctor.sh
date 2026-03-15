@@ -7,6 +7,7 @@ DOCKER_DIR="${PROJECT_DIR}/chat-docker"
 COMPOSE_FILE="${DOCKER_DIR}/docker-compose.yml"
 ENV_FILE="${DOCKER_DIR}/.env"
 ENV_EXAMPLE_FILE="${DOCKER_DIR}/.env.example"
+DOCTOR_MODE="${1:-n8n}"
 
 log_info() {
   printf '[INFO] %s\n' "$1"
@@ -68,9 +69,14 @@ diagnose_ports() {
   local collisions=0
   local frontend_port="${FRONTEND_PORT:-4300}"
   local core_service_port="${CORE_SERVICE_PORT:-4012}"
-  local postgres_port="${POSTGRES_PORT:-5454}"
   local n8n_port="${N8N_PORT:-5690}"
-  local ports=("${frontend_port}" "${core_service_port}" "${postgres_port}" "${n8n_port}")
+  local ports=()
+
+  if [[ "${DOCTOR_MODE}" == "full" ]]; then
+    ports=("${frontend_port}" "${core_service_port}" "${n8n_port}")
+  else
+    ports=("${n8n_port}")
+  fi
 
   for port in "${ports[@]}"; do
     if port_in_use "${port}"; then
@@ -112,7 +118,12 @@ print_versions() {
   log_info "git version: $(git --version 2>/dev/null || echo 'not available')"
 }
 
-log_info "Running utn-ai doctor."
+if [[ "${DOCTOR_MODE}" != "n8n" && "${DOCTOR_MODE}" != "full" ]]; then
+  log_error "Invalid doctor mode: ${DOCTOR_MODE}. Allowed values: n8n | full"
+  exit 1
+fi
+
+log_info "Running utn-utnito doctor (mode: ${DOCTOR_MODE})."
 
 status=0
 check_command git || status=1
