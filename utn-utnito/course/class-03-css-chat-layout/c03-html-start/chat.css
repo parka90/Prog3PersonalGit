@@ -1,9 +1,87 @@
-/* Class 03 start styles: this file is completed step by step in class. */
+/* Step 3: CSS basics + selectors (no flex layout yet). */
 body {
+  margin: 0;
   background-color: #1f2024;
   color: #ececf1;
 }
 
-.chat-start {
-  padding: 24px;
+.sidebar,
+.chat-header,
+.messages,
+.composer-wrap {
+  border: 1px solid #343740;
+  margin: 10px;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.sidebar {
+  background-color: #15161a;
+}
+
+.chat-header {
+  background-color: #262a34;
+}
+
+.new-chat-btn {
+  border: 1px solid #434752;
+  border-radius: 10px;
+  background-color: #272a31;
+  color: #ececf1;
+  padding: 10px;
+}
+
+.section-title {
+  font-size: 12px;
+  color: #a8adba;
+  text-transform: uppercase;
+}
+
+.chat-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chat-item {
+  margin-bottom: 8px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+
+.chat-item.active {
+  border-color: #444854;
+  background-color: #2a2d35;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #41465a;
+  border-radius: 12px;
+  background-color: #2a2d38;
+}
+
+.message.user {
+  border-color: #8f4652;
+  background-color: #4a2d35;
+}
+
+#composer-input {
+  width: 100%;
+  border: 1px solid #454a57;
+  border-radius: 10px;
+  background-color: #313542;
+  color: #ececf1;
+  padding: 10px;
+}
+
+.composer button {
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: #cf5f6f;
+  color: #ffffff;
+  padding: 10px 20px;
 }

@@ -8,10 +8,29 @@
     <link rel="stylesheet" href="./chat.css" />
   </head>
   <body>
-    <main class="chat-start">
-      <h1>Class 03 Start Point</h1>
-      <p>We will build this chat layout step by step with HTML and CSS.</p>
-      <p><a href="./login.html">Back to login</a></p>
-    </main>
+    <div class="chat-layout">
+      <aside class="sidebar">
+        <h2>Sidebar</h2>
+        <p>Chat list area</p>
+      </aside>
+
+      <main class="chat-main">
+        <header class="chat-header">
+          <h1>UTNito</h1>
+          <p>Header area</p>
+        </header>
+
+        <section class="messages">
+          <p>Messages area</p>
+        </section>
+
+        <footer class="composer-wrap">
+          <form class="composer" action="#" method="post">
+            <textarea id="composer-input" rows="1" placeholder="Message UTNito..."></textarea>
+            <button type="submit">Send</button>
+          </form>
+        </footer>
+      </main>
+    </div>
   </body>
 </html>
