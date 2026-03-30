@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Step 5 - Resizer Demo</title>
+    <link rel="stylesheet" href="./resizer-demo.css" />
+    <script src="./resizer-demo.js" defer></script>
+  </head>
+  <body>
+    <header class="toolbar">
+      <label for="panel-width">Left panel width:</label>
+      <input
+        id="panel-width"
+        type="range"
+        min="180"
+        max="520"
+        value="280"
+        step="10"
+      />
+      <span id="panel-width-value">280px</span>
+    </header>
+
+    <div class="layout">
+      <aside class="left-panel">
+        <h2>Left panel</h2>
+        <p>Move the slider to resize this panel.</p>
+      </aside>
+
+      <main class="right-panel">
+        <h2>Right panel</h2>
+        <p>This area keeps the remaining space.</p>
+      </main>
+    </div>
+  </body>
+</html>

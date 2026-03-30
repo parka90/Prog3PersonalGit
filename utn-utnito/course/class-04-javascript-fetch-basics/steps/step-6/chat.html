@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTNito | Chat</title>
+    <link rel="stylesheet" href="./tokens.css" />
+    <link rel="stylesheet" href="./chat.css" />
+    <script src="./chat.js" defer></script>
+  </head>
+  <body>
+    <div class="chat-layout" id="chat-layout">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <button id="new-chat-btn" class="new-chat-btn" type="button">+ New chat</button>
+          <p class="section-title">Your chats</p>
+          <ul class="chat-list" id="chat-list"></ul>
+        </div>
+
+        <div class="sidebar-bottom">
+          <div class="user-card">
+            <span class="user-avatar">CG</span>
+            <strong id="user-display-name">Carlos Gardel</strong>
+          </div>
+          <a id="logout-link" href="./login.html">Log out</a>
+        </div>
+      </aside>
+
+      <div
+        id="sidebar-resizer"
+        class="sidebar-resizer"
+        role="separator"
+        aria-label="Resize sidebar"
+        aria-orientation="vertical"
+      ></div>
+
+      <main class="chat-main">
+        <header class="chat-header">
+          <div class="brand-block">
+            <img src="./assets/utnito-logo.svg" alt="UTNito logo" class="brand-logo" />
+            <div>
+              <h1>UTNito</h1>
+              <p>Feel free to talk to UTNito about anything.</p>
+              <p class="active-chat-line">Active chat: <strong id="active-chat-title">-</strong></p>
+            </div>
+          </div>
+        </header>
+
+        <section class="messages" id="messages"></section>
+
+        <footer class="composer-wrap">
+          <form class="composer" id="message-form" action="#" method="post">
+            <textarea id="composer-input" rows="1" placeholder="Message UTNito..."></textarea>
+            <button id="send-btn" type="submit">Send</button>
+          </form>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

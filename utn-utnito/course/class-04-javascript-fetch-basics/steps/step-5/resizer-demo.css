@@ -1,0 +1,53 @@
+:root {
+  --left-panel-width: 280px;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #1f2024;
+  color: #ececf1;
+  font-family: sans-serif;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #343a4b;
+  background-color: #242833;
+}
+
+#panel-width {
+  width: 240px;
+}
+
+#panel-width-value {
+  min-width: 56px;
+  font-weight: 700;
+  color: #9ec3ff;
+}
+
+.layout {
+  flex: 1;
+  display: flex;
+}
+
+.left-panel {
+  width: var(--left-panel-width);
+  min-width: var(--left-panel-width);
+  max-width: var(--left-panel-width);
+  box-sizing: border-box;
+  padding: 16px;
+  background-color: #252a35;
+  border-right: 1px solid #3c4459;
+}
+
+.right-panel {
+  flex: 1;
+  padding: 16px;
+  background-color: #262a34;
+}
