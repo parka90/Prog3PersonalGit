@@ -1,0 +1,11 @@
+{
+  "serverTime": "2026-04-12T00:00:00.000Z",
+  "success": true,
+  "responseMessage": {
+    "messageCode": "0000",
+    "message": "Reply template loaded"
+  },
+  "data": {
+    "assistantPrefix": "Mock async reply: I received"
+  }
+}

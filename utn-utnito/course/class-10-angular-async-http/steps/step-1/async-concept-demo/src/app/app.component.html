@@ -1,0 +1,79 @@
+<main class="demo-shell">
+  <div class="demo-card">
+    <h1>{{ title }}</h1>
+    <p>{{ subtitle }}</p>
+
+    <div class="demo-block">
+      <h2>1 - Load messages (async)</h2>
+      <div class="button-row">
+        <button type="button" class="btn-success" (click)="loadMessages()" [disabled]="loadingMessages || sendingMessage">
+          GET messages
+        </button>
+        <button
+          type="button"
+          class="btn-danger"
+          (click)="loadMessagesWithError()"
+          [disabled]="loadingMessages || sendingMessage"
+        >
+          Simulate GET error
+        </button>
+      </div>
+      <p class="state-line">requestCount = <strong>{{ requestCount }}</strong></p>
+      <p class="state-line">lastStatus = <strong>{{ lastStatus }}</strong></p>
+      <p class="state-line">loadingMessages = <strong>{{ loadingMessages }}</strong></p>
+      <p class="state-line">sendingMessage = <strong>{{ sendingMessage }}</strong></p>
+    </div>
+
+    <div class="demo-block">
+      <h2>2 - Send message (async + mock echo)</h2>
+      <form class="create-form" (submit)="sendMessage($event, false)">
+        <textarea
+          #draftInput
+          rows="2"
+          name="draftMessage"
+          [disabled]="loadingMessages || sendingMessage"
+          [value]="draftMessage"
+          placeholder="Write a message..."
+          (input)="onDraftInput(draftInput.value)"
+        ></textarea>
+        <div class="button-row">
+          <button
+            type="submit"
+            class="btn-success"
+            [disabled]="loadingMessages || sendingMessage || !draftMessage.trim()"
+          >
+            {{ sendingMessage ? 'Sending...' : 'POST message' }}
+          </button>
+          <button
+            type="button"
+            class="btn-danger"
+            [disabled]="loadingMessages || sendingMessage || !draftMessage.trim()"
+            (click)="sendMessage($event, true)"
+          >
+            Simulate POST error
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="demo-block">
+      <div class="section-header">
+        <h2>3 - Observe loading/error + render messages</h2>
+        <button type="button" class="btn-secondary" (click)="clearMessages()">Clear</button>
+      </div>
+      <p class="loading-state" *ngIf="loadingMessages">Loading messages...</p>
+      <p class="loading-state" *ngIf="sendingMessage">Sending message...</p>
+      <p class="error-state" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <ul class="list-shell" *ngIf="messages.length; else emptyMessages">
+        <li class="tip-item" *ngFor="let message of messages" [class.user-message]="message.role === 'user'">
+          <strong>{{ message.role }}:</strong> {{ message.content }}
+        </li>
+      </ul>
+
+      <ng-template #emptyMessages>
+        <p class="empty-state">No messages loaded yet.</p>
+      </ng-template>
+    </div>
+  </div>
+</main>

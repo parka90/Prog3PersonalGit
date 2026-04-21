@@ -1,0 +1,28 @@
+<main class="routing-demo-page">
+  <section class="routing-demo-card">
+    <h1>Angular Routing Demo</h1>
+    <p>Concept demo with two routes: <code>/one</code> and <code>/two</code>.</p>
+    <p class="hint">
+      Same target route, two ways to navigate: <code>routerLink</code> from UI and
+      <code>router.navigate()</code> from code.
+    </p>
+
+    <div class="route-nav">
+      <section class="nav-group">
+        <h2>Navigation by UI (routerLink)</h2>
+        <a class="route-one" routerLink="/one">Go to One</a>
+        <a class="route-two" routerLink="/two">Go to Two</a>
+      </section>
+
+      <section class="nav-group">
+        <h2>Navigation by code (router.navigate)</h2>
+        <button class="route-one" type="button" (click)="goToOneByCode()">Go to One (code)</button>
+        <button class="route-two" type="button" (click)="goToTwoByCode()">Go to Two (code)</button>
+      </section>
+    </div>
+
+    <section class="route-preview">
+      <router-outlet></router-outlet>
+    </section>
+  </section>
+</main>

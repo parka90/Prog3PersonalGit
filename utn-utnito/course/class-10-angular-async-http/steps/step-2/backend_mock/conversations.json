@@ -1,0 +1,33 @@
+{
+  "serverTime": "2026-04-12T00:00:00.000Z",
+  "success": true,
+  "responseMessage": {
+    "messageCode": "0000",
+    "message": "Conversations loaded"
+  },
+  "data": {
+    "data": [
+      {
+        "id": "conv-1",
+        "title": "Final project planning",
+        "archived": false,
+        "messages": []
+      },
+      {
+        "id": "conv-2",
+        "title": "REST endpoint questions",
+        "archived": false,
+        "messages": []
+      },
+      {
+        "id": "conv-3",
+        "title": "Docker setup help",
+        "archived": false,
+        "messages": []
+      }
+    ],
+    "total": 3,
+    "page": 1,
+    "limit": 20
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "serverTime": "2026-04-12T00:00:00.000Z",
+  "success": true,
+  "responseMessage": {
+    "messageCode": "0000",
+    "message": "Messages loaded"
+  },
+  "data": {
+    "data": [],
+    "total": 0,
+    "page": 1,
+    "limit": 50
+  }
+}

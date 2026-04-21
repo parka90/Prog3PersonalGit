@@ -1,0 +1,47 @@
+<main class="demo-shell">
+  <section class="demo-card">
+    <h1>{{ title }}</h1>
+    <p>{{ subtitle }}</p>
+
+    <div class="demo-block">
+      <h2>1) Interpolation</h2>
+      <p>User name: <strong>{{ displayName }}</strong></p>
+    </div>
+
+    <div class="demo-block">
+      <h2>2) Property binding</h2>
+      <input
+        #propertyInput
+        type="text"
+        [value]="draftName"
+        (input)="draftName = propertyInput.value"
+        placeholder="Write a user name"
+      />
+      <input
+        #propertyAgeInput
+        type="number"
+        [value]="draftAge"
+        (input)="draftAge = propertyAgeInput.value"
+        placeholder="Write age"
+        min="1"
+      />
+      <button type="button" (click)="updateNameAndAge()">Send</button>
+      <p>Applied age: <strong>{{ displayAge }}</strong></p>
+    </div>
+
+    <div class="demo-block">
+      <h2>3) Two-way binding (preview)</h2>
+      <input type="text" [(ngModel)]="displayName" placeholder="Edit user name live" />
+      <p>Live value: <strong>{{ displayName }}</strong></p>
+    </div>
+
+    <div class="demo-block">
+      <h2>4) Event binding</h2>
+      <div class="event-row">
+        <button type="button" (click)="onPrimaryClick()">Click Me</button>
+        <button type="button" class="btn-danger" (click)="resetCounter()">Reset counter</button>
+        <p>Click count: <strong>{{ clickCount }}</strong></p>
+      </div>
+    </div>
+  </section>
+</main>

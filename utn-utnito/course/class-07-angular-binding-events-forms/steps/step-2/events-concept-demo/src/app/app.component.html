@@ -1,0 +1,26 @@
+<main class="demo-shell">
+  <section class="demo-card">
+    <h1>Events Concept Demo</h1>
+    <p>Flow: user action -> Angular event -> TypeScript method -> UI update.</p>
+
+    <div class="demo-block">
+      <label for="liveInput">Input event</label>
+      <input id="liveInput" #liveInput type="text" (input)="onInput(liveInput.value)" />
+      <p>Input preview: <strong>{{ inputPreview || '(empty)' }}</strong></p>
+    </div>
+
+    <div class="demo-block">
+      <button type="button" (click)="onButtonClick()">Click event</button>
+    </div>
+
+    <div class="demo-block">
+      <form class="submit-form" (submit)="onSubmit($event, submitInput.value)">
+        <input #submitInput type="text" placeholder="Text for submit event" />
+        <button type="submit">Submit event</button>
+      </form>
+    </div>
+
+    <p>Last action: <strong>{{ lastAction }}</strong></p>
+    <p>Button clicks: {{ clickCount }} | Form submits: {{ submitCount }}</p>
+  </section>
+</main>

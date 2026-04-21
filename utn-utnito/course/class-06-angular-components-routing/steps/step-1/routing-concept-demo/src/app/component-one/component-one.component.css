@@ -1,0 +1,9 @@
+.demo-block {
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.one {
+  border: 1px solid #4f6ccf;
+  background: #2b3766;
+}

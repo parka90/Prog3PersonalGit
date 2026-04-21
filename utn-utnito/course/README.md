@@ -16,6 +16,13 @@ Clases actuales:
 - [`class-01-setup-hello-world`](./class-01-setup-hello-world)
 - [`class-02-html-login-basics`](./class-02-html-login-basics)
 - [`class-03-css-chat-layout`](./class-03-css-chat-layout)
+- [`class-04-javascript-fetch-basics`](./class-04-javascript-fetch-basics)
+- [`class-05-angular-migrate-login-chat`](./class-05-angular-migrate-login-chat)
+- [`class-06-angular-components-routing`](./class-06-angular-components-routing)
+- [`class-07-angular-binding-events-forms`](./class-07-angular-binding-events-forms)
+- [`class-08-angular-chat-local-state`](./class-08-angular-chat-local-state)
+- [`class-09-angular-services-models`](./class-09-angular-services-models)
+- [`class-10-angular-async-http`](./class-10-angular-async-http)
 
 ## English
 
@@ -33,3 +40,10 @@ Current classes:
 - [`class-01-setup-hello-world`](./class-01-setup-hello-world)
 - [`class-02-html-login-basics`](./class-02-html-login-basics)
 - [`class-03-css-chat-layout`](./class-03-css-chat-layout)
+- [`class-04-javascript-fetch-basics`](./class-04-javascript-fetch-basics)
+- [`class-05-angular-migrate-login-chat`](./class-05-angular-migrate-login-chat)
+- [`class-06-angular-components-routing`](./class-06-angular-components-routing)
+- [`class-07-angular-binding-events-forms`](./class-07-angular-binding-events-forms)
+- [`class-08-angular-chat-local-state`](./class-08-angular-chat-local-state)
+- [`class-09-angular-services-models`](./class-09-angular-services-models)
+- [`class-10-angular-async-http`](./class-10-angular-async-http)

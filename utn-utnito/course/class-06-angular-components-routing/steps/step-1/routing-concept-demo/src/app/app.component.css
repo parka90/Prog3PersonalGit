@@ -1,0 +1,98 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.routing-demo-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #1f2230;
+  color: #e9ecf3;
+}
+
+.routing-demo-card {
+  width: 100%;
+  max-width: 860px;
+  border: 1px solid #3a3f52;
+  border-radius: 16px;
+  background: #2a2f40;
+  padding: 24px;
+}
+
+.hint {
+  color: #cfd5e7;
+  margin-top: 10px;
+}
+
+.route-nav {
+  display: flex;
+  gap: 14px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.nav-group {
+  flex: 1 1 320px;
+  border: 1px solid #444b67;
+  border-radius: 10px;
+  background: #24293b;
+  padding: 12px;
+}
+
+.nav-group h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.route-nav a,
+.route-nav button {
+  width: 100%;
+  text-align: left;
+  display: block;
+  margin-bottom: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #f3f5fa;
+  background: #3d4460;
+  border: 1px solid #525b78;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 15px;
+  transition: filter 0.15s ease-in-out;
+}
+
+.route-nav button {
+  font: inherit;
+}
+
+.route-nav .route-one {
+  border: 1px solid #4f6ccf;
+  background: #2b3766;
+}
+
+.route-nav .route-two {
+  border: 1px solid #4da88b;
+  background: #254f46;
+}
+
+.route-nav a:hover,
+.route-nav button:hover {
+  filter: brightness(1.08);
+}
+
+.route-nav a:last-child,
+.route-nav button:last-child {
+  margin-bottom: 0;
+}
+
+.route-preview {
+  margin-top: 18px;
+  border: 1px solid #49506b;
+  border-radius: 12px;
+  padding: 14px;
+  background: #232839;
+}

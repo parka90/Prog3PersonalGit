@@ -1,0 +1,25 @@
+{
+  "serverTime": "2026-04-12T00:00:00.000Z",
+  "success": true,
+  "responseMessage": {
+    "messageCode": "0000",
+    "message": "Messages loaded"
+  },
+  "data": {
+    "data": [
+      {
+        "id": "m-1",
+        "role": "assistant",
+        "content": "Hi! Ready to review today's class goals?"
+      },
+      {
+        "id": "m-2",
+        "role": "user",
+        "content": "Yes, show me the checkpoint for class 9."
+      }
+    ],
+    "total": 2,
+    "page": 1,
+    "limit": 50
+  }
+}
